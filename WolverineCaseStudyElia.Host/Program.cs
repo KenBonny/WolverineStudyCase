@@ -57,6 +57,9 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapWolverineEndpoints();
+app.MapWolverineEndpoints(options =>
+{
+    options.RequireAuthorizeOnAll();
+});
 
 app.Run();
