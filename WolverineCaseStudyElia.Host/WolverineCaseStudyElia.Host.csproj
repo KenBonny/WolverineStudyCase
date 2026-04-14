@@ -9,6 +9,9 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="10.0.5" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
+        <PackageReference Include="NServiceBus" Version="10.1.1" />
+        <PackageReference Include="NServiceBus.Extensions.Hosting" Version="4.0.0" />
+        <PackageReference Include="NServiceBus.RabbitMQ" Version="11.2.0" />
     </ItemGroup>
 
 </Project>

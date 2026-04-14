@@ -1,6 +1,24 @@
 using Microsoft.AspNetCore.Authentication.Negotiate;
+using EndpointConfiguration = NServiceBus.EndpointConfiguration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseNServiceBus(context =>
+{
+    var endpointConfiguration = new EndpointConfiguration("WolverineCaseStudyElia");
+    endpointConfiguration.UseSerialization<SystemJsonSerializer>();
+
+    var connectionString = context.Configuration.GetConnectionString("RabbitMQ")
+        ?? throw new InvalidOperationException("RabbitMQ connection string is not configured.");
+
+    var transport = new RabbitMQTransport(RoutingTopology.Conventional(QueueType.Quorum), connectionString);
+    var routing = endpointConfiguration.UseTransport(transport);
+    routing.RouteToEndpoint(typeof(WriteToConsole).Assembly, "WolverineCaseStudyElia");
+
+    endpointConfiguration.EnableInstallers();
+
+    return endpointConfiguration;
+});
 
 // Add services to the container.
 
