@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authentication.Negotiate;
-using EndpointConfiguration = NServiceBus.EndpointConfiguration;
 using Scalar.AspNetCore;
+using Wolverine;
+using Wolverine.Http;
+using WolverineCaseStudyElia.Host.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,8 +23,14 @@ builder.Host.UseNServiceBus(context =>
     return endpointConfiguration;
 });
 
-// Add services to the container.
+// Set up Wolverine
+builder.Host.UseWolverine(options =>
+{
+    options.Policies.AutoApplyTransactions();
+});
+builder.Services.AddWolverineHttp();
 
+// Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -49,5 +57,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapWolverineEndpoints();
 
 app.Run();
