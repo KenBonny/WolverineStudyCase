@@ -1,0 +1,6 @@
+@WolverineCaseStudyElia.Host_HostAddress = http://localhost:5228
+
+GET {{WolverineCaseStudyElia.Host_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
