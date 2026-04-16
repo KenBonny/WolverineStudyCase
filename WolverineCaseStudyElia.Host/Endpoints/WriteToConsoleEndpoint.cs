@@ -3,17 +3,22 @@ using WolverineCaseStudyElia.Host.Handlers;
 
 namespace WolverineCaseStudyElia.Host.Endpoints;
 
-public static class WriteToConsoleEndpoint
+public class WriteToConsoleEndpoint
 {
-    [WolverinePost("/console")]
-    public static async Task<IResult> Post(
-        WriteToConsole message,
-        IMessageSession session,
-        HttpContext httpContext,
-        ILogger logger)
+    private readonly IMessageSession _session;
+    private readonly ILogger _logger;
+
+    public WriteToConsoleEndpoint(IMessageSession session, ILogger logger)
     {
-        logger.LogInformation("Received message from: {IdentityName}", httpContext.User.Identity?.Name ?? "Anonymous");
-        await session.Send(message);
+        _session = session;
+        _logger = logger;
+    }
+    
+    [WolverinePost("/console")]
+    public async Task<IResult> Post(WriteToConsole message, HttpContext httpContext)
+    {
+        _logger.LogInformation("Received message from: {IdentityName}", httpContext.User.Identity?.Name ?? "Anonymous");
+        await _session.Send(message);
         return Results.Accepted();
     }
 }
