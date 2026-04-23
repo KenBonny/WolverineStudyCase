@@ -15,7 +15,7 @@ public class WriteToConsoleHandler : IHandleMessages<WriteToConsole>
         if (message.Color.HasValue)
             Console.ForegroundColor = message.Color.Value;
 
-        Console.WriteLine(message.Text);
+        Console.WriteLine("[NSB] " + message.Text);
 
         Console.ForegroundColor = originalColor;
 
