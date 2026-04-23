@@ -1,10 +1,15 @@
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Scalar.AspNetCore;
+using Serilog;
 using Wolverine;
 using Wolverine.Http;
 using WolverineCaseStudyElia.Host.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, services, config) =>
+    config.ReadFrom.Configuration(context.Configuration)
+          .ReadFrom.Services(services));
 
 builder.Host.UseNServiceBus(context =>
 {
