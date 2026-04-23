@@ -3,6 +3,7 @@ using Scalar.AspNetCore;
 using Serilog;
 using Wolverine;
 using Wolverine.Http;
+using Wolverine.RabbitMQ;
 using WolverineCaseStudyElia.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,25 +12,18 @@ builder.Host.UseSerilog((context, services, config) =>
     config.ReadFrom.Configuration(context.Configuration)
           .ReadFrom.Services(services));
 
-builder.Host.UseNServiceBus(context =>
-{
-    var endpointConfiguration = new EndpointConfiguration("WolverineCaseStudyElia.Host");
-    endpointConfiguration.SendOnly();
-    endpointConfiguration.UseSerialization<SystemJsonSerializer>();
-
-    var connectionString = context.Configuration.GetConnectionString("RabbitMQ")
-        ?? throw new InvalidOperationException("RabbitMQ connection string is not configured.");
-
-    var transport = new RabbitMQTransport(RoutingTopology.Conventional(QueueType.Quorum), connectionString);
-    var routing = endpointConfiguration.UseTransport(transport);
-    routing.RouteToEndpoint(typeof(WriteToConsole), "WolverineCaseStudyElia");
-
-    return endpointConfiguration;
-});
-
 // Set up Wolverine
 builder.Host.UseWolverine(options =>
 {
+    var rabbitUri = new Uri(builder.Configuration.GetConnectionString("RabbitMQ")
+        ?? throw new InvalidOperationException("RabbitMQ connection string is not configured."));
+
+    options.UseRabbitMq(rabbitUri);
+
+    options.PublishMessage<WriteToConsole>()
+        .ToRabbitQueue("WolverineCaseStudyElia")
+        .UseNServiceBusInterop();
+
     options.Policies.AutoApplyTransactions();
 });
 builder.Services.AddWolverineHttp();
