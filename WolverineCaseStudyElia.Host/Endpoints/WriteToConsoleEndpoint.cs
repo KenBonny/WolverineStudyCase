@@ -1,5 +1,5 @@
 using Wolverine.Http;
-using WolverineCaseStudyElia.Host.Handlers;
+using WolverineCaseStudyElia.Contracts;
 
 namespace WolverineCaseStudyElia.Host.Endpoints;
 

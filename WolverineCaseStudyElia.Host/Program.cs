@@ -3,7 +3,7 @@ using Scalar.AspNetCore;
 using Serilog;
 using Wolverine;
 using Wolverine.Http;
-using WolverineCaseStudyElia.Host.Handlers;
+using WolverineCaseStudyElia.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +13,8 @@ builder.Host.UseSerilog((context, services, config) =>
 
 builder.Host.UseNServiceBus(context =>
 {
-    var endpointConfiguration = new EndpointConfiguration("WolverineCaseStudyElia");
+    var endpointConfiguration = new EndpointConfiguration("WolverineCaseStudyElia.Host");
+    endpointConfiguration.SendOnly();
     endpointConfiguration.UseSerialization<SystemJsonSerializer>();
 
     var connectionString = context.Configuration.GetConnectionString("RabbitMQ")
@@ -21,9 +22,7 @@ builder.Host.UseNServiceBus(context =>
 
     var transport = new RabbitMQTransport(RoutingTopology.Conventional(QueueType.Quorum), connectionString);
     var routing = endpointConfiguration.UseTransport(transport);
-    routing.RouteToEndpoint(typeof(WriteToConsole).Assembly, "WolverineCaseStudyElia");
-
-    endpointConfiguration.EnableInstallers();
+    routing.RouteToEndpoint(typeof(WriteToConsole), "WolverineCaseStudyElia");
 
     return endpointConfiguration;
 });

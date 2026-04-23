@@ -1,10 +1,6 @@
-namespace WolverineCaseStudyElia.Host.Handlers;
+using WolverineCaseStudyElia.Contracts;
 
-public record WriteToConsole : ICommand
-{
-    public required string Text { get; init; }
-    public ConsoleColor? Color { get; init; }
-}
+namespace WolverineCaseStudyElia.NsbWorker.Handlers;
 
 public class WriteToConsoleHandler : IHandleMessages<WriteToConsole>
 {
