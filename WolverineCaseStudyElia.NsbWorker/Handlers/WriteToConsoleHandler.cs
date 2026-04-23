@@ -4,7 +4,7 @@ namespace WolverineCaseStudyElia.NsbWorker.Handlers;
 
 public class WriteToConsoleHandler : IHandleMessages<WriteToConsole>
 {
-    public Task Handle(WriteToConsole message, IMessageHandlerContext context)
+    public async Task Handle(WriteToConsole message, IMessageHandlerContext context)
     {
         var originalColor = Console.ForegroundColor;
 
@@ -14,7 +14,7 @@ public class WriteToConsoleHandler : IHandleMessages<WriteToConsole>
         Console.WriteLine("[NSB] " + message.Text);
 
         Console.ForegroundColor = originalColor;
-
-        return Task.CompletedTask;
+        
+        await context.Publish(new WrittenToConsole(message.Text));
     }
 }
