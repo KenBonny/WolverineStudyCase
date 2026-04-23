@@ -8,7 +8,7 @@ public class WriteToConsoleEndpoint
     private readonly IMessageSession _session;
     private readonly ILogger _logger;
 
-    public WriteToConsoleEndpoint(IMessageSession session, ILogger logger)
+    public WriteToConsoleEndpoint(IMessageSession session, ILogger<WriteToConsoleEndpoint> logger)
     {
         _session = session;
         _logger = logger;
