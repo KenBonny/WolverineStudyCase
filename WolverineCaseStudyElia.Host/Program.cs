@@ -18,10 +18,16 @@ builder.Host.UseWolverine(options =>
     var rabbitUri = new Uri(builder.Configuration.GetConnectionString("RabbitMQ")
         ?? throw new InvalidOperationException("RabbitMQ connection string is not configured."));
 
-    options.UseRabbitMq(rabbitUri);
+    options.UseRabbitMq(rabbitUri)
+        .AutoProvision()
+        .BindExchange("WolverineCaseStudyElia.Contracts:WrittenToConsole")
+        .ToQueue("WolverineCaseStudyElia.NsbInterop");
 
     options.PublishMessage<WriteToConsole>()
         .ToRabbitQueue("WolverineCaseStudyElia")
+        .UseNServiceBusInterop();
+
+    options.ListenToRabbitQueue("WolverineCaseStudyElia.NsbInterop")
         .UseNServiceBusInterop();
 
     options.Policies.AutoApplyTransactions();
