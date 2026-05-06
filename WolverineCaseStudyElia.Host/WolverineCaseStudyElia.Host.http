@@ -1,6 +1,26 @@
 @WolverineCaseStudyElia.Host_HostAddress = http://localhost:5228
 
-GET {{WolverineCaseStudyElia.Host_HostAddress}}/weatherforecast/
-Accept: application/json
+### Start saga (auto-generated sagaId when omitted)
+POST {{WolverineCaseStudyElia.Host_HostAddress}}/saga?action=Start
+
+###
+
+### Start saga with explicit sagaId
+POST {{WolverineCaseStudyElia.Host_HostAddress}}/saga?action=Start&sagaId=11111111-1111-1111-1111-111111111111
+
+###
+
+### Approve saga
+POST {{WolverineCaseStudyElia.Host_HostAddress}}/saga?action=Approve&sagaId=11111111-1111-1111-1111-111111111111
+
+###
+
+### Deny saga
+POST {{WolverineCaseStudyElia.Host_HostAddress}}/saga?action=Deny&sagaId=11111111-1111-1111-1111-111111111111
+
+###
+
+### Stop saga (only valid when approved or denied)
+POST {{WolverineCaseStudyElia.Host_HostAddress}}/saga?action=Stop&sagaId=11111111-1111-1111-1111-111111111111
 
 ###
