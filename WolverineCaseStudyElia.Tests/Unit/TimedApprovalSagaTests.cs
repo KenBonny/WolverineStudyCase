@@ -28,7 +28,7 @@ public class TimedApprovalSagaTests
     public void stop_marks_saga_as_completed()
     {
         var (saga, _, _) = TimedApprovalSaga.Start(new(_id), _options);
-        var approveMessage = saga.Handle(new ApproveTimedApprovalSaga(saga.Id));
+        var (approveMessage, _) = saga.Handle(new ApproveTimedApprovalSaga(saga.Id));
         Assert.Equal($"Saga {saga.Id} was approved", approveMessage.Text);
 
         var sideEffect = saga.Handle(new StopTimedApprovalSaga(saga.Id));

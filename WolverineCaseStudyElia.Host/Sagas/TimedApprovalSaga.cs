@@ -26,25 +26,29 @@ public class TimedApprovalSaga : Wolverine.Saga
         return (saga, new ConsoleWriteSideEffect($"Saga {command.Id} started"), messages);
     }
 
-    public ConsoleWriteSideEffect Handle(ApproveTimedApprovalSaga _)
+    public (ConsoleWriteSideEffect?, OutgoingMessages messages) Handle(ApproveTimedApprovalSaga _)
     {
+        var messages = new OutgoingMessages();
         if (Status != TimedApprovalSagaStatus.Started)
-            return null;
+            return (null, messages);
 
         Status = TimedApprovalSagaStatus.Approved;
-        return new ConsoleWriteSideEffect($"Saga {Id} was approved");
+        messages.Add(new SagaApproved(Id));
+        return (new ConsoleWriteSideEffect($"Saga {Id} was approved"), messages);
     }
     
-    public ConsoleWriteSideEffect Handle(DenyTimedApprovalSaga _)
+    public (ConsoleWriteSideEffect?, OutgoingMessages messages) Handle(DenyTimedApprovalSaga _)
     {
+        var messages = new OutgoingMessages();
         if (Status != TimedApprovalSagaStatus.Started)
-            return null;
+            return (null, messages);
         
         Status = TimedApprovalSagaStatus.Denied;
-        return new ConsoleWriteSideEffect($"Saga {Id} was denied");
+        messages.Add(new SagaDenied(Id));
+        return (new ConsoleWriteSideEffect($"Saga {Id} was denied"), messages);
     }
     
-    public ConsoleWriteSideEffect Handle(StopTimedApprovalSaga _)
+    public ConsoleWriteSideEffect? Handle(StopTimedApprovalSaga _)
     {
         var isDisallowed = Status != TimedApprovalSagaStatus.Approved && Status != TimedApprovalSagaStatus.Denied;
         if (isDisallowed)
@@ -56,7 +60,7 @@ public class TimedApprovalSaga : Wolverine.Saga
         return new ConsoleWriteSideEffect($"Saga {Id} was completed");
     }
     
-    public ConsoleWriteSideEffect Handle(TimedApprovalSagaTimedOut _)
+    public ConsoleWriteSideEffect? Handle(TimedApprovalSagaTimedOut _)
     {
         if (Status != TimedApprovalSagaStatus.Started)
             return null;

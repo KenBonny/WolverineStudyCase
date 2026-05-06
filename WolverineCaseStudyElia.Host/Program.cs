@@ -7,6 +7,7 @@ using Wolverine.Http;
 using Wolverine.RabbitMQ;
 using WolverineCaseStudyElia.Contracts;
 using WolverineCaseStudyElia.Host.Sagas;
+using WolverineCaseStudyElia.Host.WolverineHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
 var isTesting = builder.Environment.IsEnvironment("Testing");
@@ -24,6 +25,7 @@ if (!isTesting)
 
         options.UseRabbitMq(rabbitUri)
             .AutoProvision()
+            .UseConventionalRouting()
             .BindExchange("WolverineCaseStudyElia.Contracts:WrittenToConsole")
             .ToQueue("WolverineCaseStudyElia.NsbInterop");
 
@@ -33,9 +35,8 @@ if (!isTesting)
 
         options.ListenToRabbitQueue("WolverineCaseStudyElia.NsbInterop")
             .UseNServiceBusInterop();
-
-        options.Discovery.IncludeType<TimedApprovalSaga>();
-
+        
+        options.Policies.DisableConventionalLocalRouting();
         options.Policies.AutoApplyTransactions();
     });
 

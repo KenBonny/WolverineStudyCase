@@ -20,8 +20,10 @@ public enum TimedApprovalSagaStatus
 public record StartTimedApprovalSaga(Guid Id);
 
 public record ApproveTimedApprovalSaga(Guid Id);
+public record SagaApproved(Guid Id);
 
 public record DenyTimedApprovalSaga(Guid Id);
+public record SagaDenied(Guid Id);
 
 public record StopTimedApprovalSaga(Guid Id);
 
