@@ -16,7 +16,7 @@ public class DenyHandler
         if (saga is null)
             return new(HandlerContinuation.Stop, [$"Unknown saga with id {command.Id}"]);
 
-        if (saga.Status != TimedApprovalSagaStatus.Started)
+        if (saga.Status != TimedApprovalSagaStatus.Denied)
             return new(
                 HandlerContinuation.Stop,
                 [$"Saga with id {command.Id} is in status {saga.Status} and cannot be approved"]);

@@ -1,4 +1,5 @@
-﻿using Wolverine;
+﻿using Microsoft.Extensions.Options;
+using Wolverine;
 using WolverineCaseStudyElia.Contracts;
 using WolverineCaseStudyElia.Host.Sagas;
 
@@ -6,10 +7,11 @@ namespace WolverineCaseStudyElia.Tests.Unit;
 
 public class TimedApprovalSagaTests
 {
-    private readonly TimedApprovalSagaOptions _options = new()
-    {
-        Timeout = TimeSpan.FromMinutes(2)
-    };
+    private readonly IOptions<TimedApprovalSagaOptions> _options = Options.Create(
+        new TimedApprovalSagaOptions()
+        {
+            Timeout = TimeSpan.FromMinutes(2)
+        });
     private readonly Guid _id = Guid.NewGuid();
     
     [Fact]

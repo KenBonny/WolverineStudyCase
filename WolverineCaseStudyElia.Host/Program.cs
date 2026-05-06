@@ -3,11 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using Wolverine;
+using Wolverine.EntityFrameworkCore;
 using Wolverine.Http;
+using Wolverine.Persistence;
 using Wolverine.RabbitMQ;
 using WolverineCaseStudyElia.Contracts;
 using WolverineCaseStudyElia.Host.Sagas;
-using WolverineCaseStudyElia.Host.WolverineHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
 var isTesting = builder.Environment.IsEnvironment("Testing");
@@ -20,6 +21,8 @@ builder.Host.UseSerilog((context, services, config) =>
 if (!isTesting)
     builder.Host.UseWolverine(options =>
     {
+        options.UseEntityFrameworkCoreTransactions(TransactionMiddlewareMode.Lightweight);
+
         var rabbitUri = new Uri(builder.Configuration.GetConnectionString("RabbitMQ")
             ?? throw new InvalidOperationException("RabbitMQ connection string is not configured."));
 
@@ -87,6 +90,12 @@ app.MapWolverineEndpoints(options =>
     }
 });
 
+// in memory workaround
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<TimedApprovalSagaDbContext>();
+    db.Database.EnsureCreated();
+}
 app.Run();
 
 public partial class Program;

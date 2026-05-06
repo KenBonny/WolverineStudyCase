@@ -1,4 +1,5 @@
-﻿using Wolverine;
+﻿using Microsoft.Extensions.Options;
+using Wolverine;
 using WolverineCaseStudyElia.Contracts;
 
 namespace WolverineCaseStudyElia.Host.Sagas;
@@ -12,7 +13,7 @@ public class TimedApprovalSaga : Wolverine.Saga
 
     public static (TimedApprovalSaga saga, ConsoleWriteSideEffect, OutgoingMessages) Start(
         StartTimedApprovalSaga command,
-        TimedApprovalSagaOptions options)
+        IOptions<TimedApprovalSagaOptions> options)
     {
         var saga = new TimedApprovalSaga
         {
@@ -21,7 +22,7 @@ public class TimedApprovalSaga : Wolverine.Saga
             Status = TimedApprovalSagaStatus.Started
         };
 
-        var messages = new OutgoingMessages([new TimedApprovalSagaTimedOut(command.Id).DelayedFor(options.Timeout)]);
+        var messages = new OutgoingMessages([new TimedApprovalSagaTimedOut(command.Id).DelayedFor(options.Value.Timeout)]);
 
         return (saga, new ConsoleWriteSideEffect($"Saga {command.Id} started"), messages);
     }
