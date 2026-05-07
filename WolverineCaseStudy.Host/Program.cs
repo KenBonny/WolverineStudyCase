@@ -10,6 +10,7 @@ using Wolverine.RabbitMQ;
 using WolverineCaseStudy.Contracts;
 using WolverineCaseStudy.Host.Sagas;
 using WolverineCaseStudy.Contracts;
+using WolverineCaseStudy.Host.Endpoints;
 using WolverineCaseStudy.Host.Sagas;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,6 +55,7 @@ builder.Services.AddDbContext<TimedApprovalSagaDbContext>(options =>
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
 
 if (!isTesting)
 {
