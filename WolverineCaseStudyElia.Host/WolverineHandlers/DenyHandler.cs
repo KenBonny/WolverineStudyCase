@@ -1,4 +1,5 @@
 ﻿using Wolverine;
+using Wolverine.Persistence;
 using WolverineCaseStudyElia.Contracts;
 using WolverineCaseStudyElia.Host.Sagas;
 
@@ -6,11 +7,6 @@ namespace WolverineCaseStudyElia.Host.WolverineHandlers;
 
 public class DenyHandler
 {
-    public static TimedApprovalSaga? Load(SagaDenied command, TimedApprovalSagaDbContext db)
-    {
-        return db.TimedApprovalSagas.Find(command.Id);
-    }
-    
     public static RequirementResult Validate(TimedApprovalSaga? saga, SagaDenied command)
     {
         if (saga is null)
@@ -24,7 +20,7 @@ public class DenyHandler
         return RequirementResult.AllGood();
     }
     
-    public static StopTimedApprovalSaga Handle(SagaDenied command, TimedApprovalSaga saga, ILogger<ApprovedHandler> logger)
+    public static StopTimedApprovalSaga Handle(SagaDenied command, [Entity] TimedApprovalSaga saga, ILogger<ApprovedHandler> logger)
     {
         logger.LogInformation(
             "Handling DenyTimedApprovalSaga command for saga {sagaId} in {SagaStatus}",
