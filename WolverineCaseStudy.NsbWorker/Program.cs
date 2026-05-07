@@ -17,8 +17,6 @@ IHost host = Host.CreateDefaultBuilder(args)
         var transport = new RabbitMQTransport(RoutingTopology.Conventional(QueueType.Quorum), connectionString);
         endpointConfiguration.UseTransport(transport);
 
-        endpointConfiguration.EnableInstallers();
-
         return endpointConfiguration;
     })
     .Build();
