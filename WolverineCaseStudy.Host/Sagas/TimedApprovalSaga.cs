@@ -71,4 +71,11 @@ public class TimedApprovalSaga : Wolverine.Saga
         MarkCompleted();
         return new ConsoleWriteSideEffect($"Saga {Id} timed out");
     }
+    
+    /// <summary>
+    /// Empty method to catch the timeout message and prevent it from being handled by the default handler
+    /// which would log a warning about an unhandled message
+    /// </summary>
+    /// <param name="_">The ignored message</param>
+    public static void NotFound(TimedApprovalSagaTimedOut _) {}
 }
