@@ -30,13 +30,6 @@ public class ApprovedHandler
             "Handling ApproveTimedApprovalSaga command for saga {sagaId} in {SagaStatus}",
             saga.Id,
             saga.Status);
-        // LogHandlingApprovetimedapprovalsagaCommandForSagaSagaid(logger, saga.Id, saga.Status);
         return new StopTimedApprovalSaga(saga.Id);
     }
-    
-    // [LoggerMessage(LogLevel.Information, "Handling ApproveTimedApprovalSaga command for saga {sagaId} in {SagaStatus}")]
-    // static partial void LogHandlingApprovetimedapprovalsagaCommandForSagaSagaid(
-    //     ILogger<ApproveHandler> logger,
-    //     Guid sagaId,
-    //     TimedApprovalSagaStatus sagaStatus);
 }

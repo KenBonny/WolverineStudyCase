@@ -5,7 +5,7 @@ using WolverineCaseStudyElia.Host.Sagas;
 
 namespace WolverineCaseStudyElia.Host.WolverineHandlers;
 
-public class DenyHandler
+public partial class DenyHandler
 {
     public static RequirementResult Validate(TimedApprovalSaga? saga, SagaDenied command)
     {
@@ -20,19 +20,15 @@ public class DenyHandler
         return RequirementResult.AllGood();
     }
     
-    public static StopTimedApprovalSaga Handle(SagaDenied command, [Entity] TimedApprovalSaga saga, ILogger<ApprovedHandler> logger)
+    public static StopTimedApprovalSaga Handle(SagaDenied command, [Entity] TimedApprovalSaga saga, ILogger<DenyHandler> logger)
     {
-        logger.LogInformation(
-            "Handling DenyTimedApprovalSaga command for saga {sagaId} in {SagaStatus}",
-            saga.Id,
-            saga.Status);
-        // LogHandlingApprovetimedapprovalsagaCommandForSagaSagaid(logger, saga.Id, saga.Status);
+        LogHandlingApprovetimedapprovalsagaCommandForSagaSagaid(logger, saga.Id, saga.Status);
         return new StopTimedApprovalSaga(saga.Id);
     }
 
-    // [LoggerMessage(LogLevel.Information, "Handling DenyTimedApprovalSaga command for saga {sagaId} in {SagaStatus}")]
-    // static partial void LogHandlingApprovetimedapprovalsagaCommandForSagaSagaid(
-    //     ILogger<ApproveHandler> logger,
-    //     Guid sagaId,
-    //     TimedApprovalSagaStatus sagaStatus);
+    [LoggerMessage(LogLevel.Information, "Handling DenyTimedApprovalSaga command for saga {sagaId} in {SagaStatus}")]
+    static partial void LogHandlingApprovetimedapprovalsagaCommandForSagaSagaid(
+        ILogger<DenyHandler> logger,
+        Guid sagaId,
+        TimedApprovalSagaStatus sagaStatus);
 }
