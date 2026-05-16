@@ -1,9 +1,7 @@
 ﻿using Wolverine;
 using WolverineCaseStudy.Contracts;
-using WolverineCaseStudy.Host.Sagas;
-using WolverineCaseStudy.Host.Sagas;
 
-namespace WolverineCaseStudy.Host.WolverineHandlers;
+namespace WolverineCaseStudy.Host.Sagas;
 
 public class ApprovedHandler
 {

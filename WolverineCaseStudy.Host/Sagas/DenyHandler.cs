@@ -1,9 +1,8 @@
 ﻿using Wolverine;
 using Wolverine.Persistence;
 using WolverineCaseStudy.Contracts;
-using WolverineCaseStudy.Host.Sagas;
 
-namespace WolverineCaseStudy.Host.WolverineHandlers;
+namespace WolverineCaseStudy.Host.Sagas;
 
 public partial class DenyHandler
 {

@@ -3,7 +3,7 @@ using Wolverine;
 using Wolverine.Http;
 using WolverineCaseStudy.Contracts;
 
-namespace WolverineCaseStudy.Host.Endpoints;
+namespace WolverineCaseStudy.Host.Sagas;
 
 
 /// <summary>
