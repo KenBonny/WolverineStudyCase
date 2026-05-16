@@ -5,12 +5,12 @@ namespace WolverineCaseStudy.Host.Sagas;
 
 public class ApprovedHandler
 {
-    public static TimedApprovalSaga? Load(SagaApproved command, TimedApprovalSagaDbContext db)
+    public static (TimedApprovalSaga?, DateTimeOffset) Load(SagaApproved command, TimedApprovalSagaDbContext db)
     {
-        return db.TimedApprovalSagas.Find(command.Id);
+        return (db.TimedApprovalSagas.Find(command.Id), DateTimeOffset.UtcNow);
     }
-    
-    public static RequirementResult Validate(TimedApprovalSaga? saga, SagaApproved command)
+
+    public static RequirementResult Validate(TimedApprovalSaga? saga, SagaApproved command, DateTimeOffset now)
     {
         if (saga is null)
             return new(HandlerContinuation.Stop, [$"Unknown saga with id {command.Id}"]);
@@ -19,6 +19,11 @@ public class ApprovedHandler
             return new(
                 HandlerContinuation.Stop,
                 [$"Saga with id {command.Id} is in status {saga.Status} and cannot be approved"]);
+        
+        if (now > saga.EndedAtUtc)
+            return new(
+                HandlerContinuation.Stop,
+                [$"Saga with id {command.Id} has expired and cannot be approved"]);
         
         return RequirementResult.AllGood();
     }
