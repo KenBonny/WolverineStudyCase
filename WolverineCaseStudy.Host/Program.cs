@@ -3,14 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using Wolverine;
+using Wolverine.CritterWatch;
 using Wolverine.EntityFrameworkCore;
 using Wolverine.Http;
 using Wolverine.Persistence;
 using Wolverine.RabbitMQ;
+using Wolverine.Runtime.Heartbeat;
 using WolverineCaseStudy.Contracts;
-using WolverineCaseStudy.Host.Sagas;
-using WolverineCaseStudy.Contracts;
-using WolverineCaseStudy.Host.Endpoints;
 using WolverineCaseStudy.Host.Sagas;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +23,9 @@ builder.Host.UseSerilog((context, services, config) =>
 if (!isTesting)
     builder.Host.UseWolverine(options =>
     {
+        options.EnableHeartbeats();
+        options.PublishMessage<WolverineHeartbeat>().ToRabbitQueue("critterwatch");
+
         options.UseEntityFrameworkCoreTransactions(TransactionMiddlewareMode.Lightweight);
 
         var rabbitUri = new Uri(builder.Configuration.GetConnectionString("RabbitMQ")
@@ -34,6 +36,10 @@ if (!isTesting)
             .UseConventionalRouting()
             .BindExchange("WolverineCaseStudy.Contracts:WrittenToConsole")
             .ToQueue("WolverineCaseStudy.NsbInterop");
+
+        options.AddCritterWatchMonitoring(
+            critterWatchUri: new Uri("rabbitmq://queue/critterwatch"),
+            systemControlUri: new Uri("rabbitmq://queue/trip-service-control"));
 
         options.PublishMessage<WriteToConsole>()
             .ToRabbitQueue("WolverineCaseStudy")
@@ -46,6 +52,7 @@ if (!isTesting)
         options.Policies.AutoApplyTransactions();
     });
 
+
 builder.Services.AddWolverineHttp();
 builder.Services.Configure<TimedApprovalSagaOptions>(builder.Configuration.GetSection("TimedApprovalSaga"));
 builder.Services.AddDbContext<TimedApprovalSagaDbContext>(options =>
@@ -55,7 +62,6 @@ builder.Services.AddDbContext<TimedApprovalSagaDbContext>(options =>
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
 
 if (!isTesting)
 {
