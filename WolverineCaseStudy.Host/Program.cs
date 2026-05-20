@@ -1,3 +1,4 @@
+using JasperFx;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -106,4 +107,5 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<TimedApprovalSagaDbContext>();
     db.Database.EnsureCreated();
 }
-app.Run();
+
+await app.RunJasperFxCommands(args);
