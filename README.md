@@ -2,8 +2,8 @@
 
 ## Table of contents
 
-1. Introduction
-2. Mixes well with current setup
+0. Introduction
+1. Mixes well with current setup
 2. Integration with NServiceBus
 3. What can Wolverine do more?
 4. We can take it even further!
@@ -58,7 +58,7 @@ When a `Finally` method is added, it will be executed regardless of whether the 
 
 In the `DenyHandler`, I stop the saga when I deny the request. What I want to focus on here is that there is no `Load` method, but I still get the saga injected into the `Handle` method. The `[Entity]` attribute tells Wolverine to load the saga from the database and inject it into the `Handle` and `Validate` methods.
 
-All these features help cut down on boilerplate and make testing easier. It lets you focus on the logic of your handlers. This comes at a cost of needing to learn a few new concepts and ways of doing things, but I think the benefits outweigh the costs in the long run.
+All these features help cut down on boilerplate and make testing easier. It lets you focus on the logic of your handlers. This comes at a cost of needing to learn new concepts and ways of doing things, but I think the benefits outweigh the costs in the long run.
 
 ## 5. Help with setup
 
