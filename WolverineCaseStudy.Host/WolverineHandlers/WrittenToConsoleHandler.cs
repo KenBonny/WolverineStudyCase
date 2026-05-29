@@ -2,10 +2,10 @@ using WolverineCaseStudy.Contracts;
 
 namespace WolverineCaseStudy.Host.WolverineHandlers;
 
-public class WrittenToConsoleHandler
+public class WrittenToConsoleHandler(ILogger<WrittenToConsoleHandler> _logger)
 {
-    public void Handle(WrittenToConsole message, ILogger<WrittenToConsoleHandler> logger)
+    public void Handle(WrittenToConsole message)
     {
-        logger.LogInformation("Received the message from NServiceBus: {Text}", message.Text);
+        _logger.LogInformation("Received the message from NServiceBus: {Text}", message.Text);
     }
 }
