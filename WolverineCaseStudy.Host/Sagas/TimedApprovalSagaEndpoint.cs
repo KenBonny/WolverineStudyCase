@@ -33,7 +33,7 @@ public static class TimedApprovalSagaEndpoint
     [Tags("TimedApprovalSaga")]
     [EndpointSummary("SagaAction")]
     [EndpointDescription("Handles the incoming request for the saga action endpoint.")]
-    [WolverinePost("/saga", OperationId = "Sagaaaa")]
+    [WolverinePost("/saga", OperationId = "Saga")]
     public static (IResult accpetedResult, OutgoingMessages) Handle(SagaAction action, Guid? sagaId)
     {
         var id = sagaId ?? Guid.NewGuid();
