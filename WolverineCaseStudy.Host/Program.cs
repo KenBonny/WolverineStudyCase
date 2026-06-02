@@ -34,7 +34,21 @@ if (!isTesting)
 
         options.UseRabbitMq(rabbitUri)
             .AutoProvision()
-            .UseConventionalRouting()
+            .UseConventionalRouting();
+        
+        var nsbBroker = new BrokerName("nsb");
+        options
+            .AddNamedRabbitMqBroker(
+                nsbBroker,
+                factory =>
+                {
+                    var nsbRabbitUri = new Uri(
+                        builder.Configuration.GetConnectionString("NsbRabbitMQ") ??
+                        throw new InvalidOperationException(
+                            "RabbitMQ connection string for NServiceBus is not configured."));
+                    factory.Uri = nsbRabbitUri;
+                })
+            .AutoProvision()
             .BindExchange("WolverineCaseStudy.Contracts:WrittenToConsole")
             .ToQueue("WolverineCaseStudy.NsbInterop");
 
