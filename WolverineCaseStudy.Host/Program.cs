@@ -1,4 +1,5 @@
 using JasperFx;
+using JasperFx.Resources;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -8,6 +9,7 @@ using Wolverine.CritterWatch;
 using Wolverine.EntityFrameworkCore;
 using Wolverine.Http;
 using Wolverine.Persistence;
+using Wolverine.Postgresql;
 using Wolverine.RabbitMQ;
 using Wolverine.Runtime.Heartbeat;
 using WolverineCaseStudy.Contracts;
@@ -19,6 +21,9 @@ var isTesting = builder.Environment.IsEnvironment("Testing");
 builder.Host.UseSerilog((context, services, config) =>
     config.ReadFrom.Configuration(context.Configuration)
           .ReadFrom.Services(services));
+
+var postgres = builder.Configuration.GetConnectionString("TimedApprovalSagaDb") ??
+    throw new InvalidOperationException("Connection string for TimedApprovalSagaDb is not configured.");
 
 // Set up Wolverine
 if (!isTesting)
@@ -65,13 +70,20 @@ if (!isTesting)
         
         options.Policies.DisableConventionalLocalRouting();
         options.Policies.AutoApplyTransactions();
+        options.Policies.UseDurableInboxOnAllListeners();
+        options.Policies.UseDurableOutboxOnAllSendingEndpoints();
+        options.Policies.UseDurableLocalQueues();
+        options.Policies.AlwaysMakeScheduledMessagesDurable();
+        options.PersistMessagesWithPostgresql(postgres);
+
+        options.Services.AddResourceSetupOnStartup();
     });
 
 
 builder.Services.AddWolverineHttp();
 builder.Services.Configure<TimedApprovalSagaOptions>(builder.Configuration.GetSection("TimedApprovalSaga"));
 builder.Services.AddDbContext<TimedApprovalSagaDbContext>(options =>
-    options.UseInMemoryDatabase("timed-approval-sagas"));
+    options.UseNpgsql(postgres));
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -119,7 +131,7 @@ app.MapWolverineEndpoints(options =>
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<TimedApprovalSagaDbContext>();
-    db.Database.EnsureCreated();
+    await db.Database.MigrateAsync();
 }
 
 await app.RunJasperFxCommands(args);
