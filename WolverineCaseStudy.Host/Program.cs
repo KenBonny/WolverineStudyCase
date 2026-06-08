@@ -62,10 +62,10 @@ if (!isTesting)
             systemControlUri: new Uri("rabbitmq://queue/trip-service-control"));
 
         options.PublishMessage<WriteToConsole>()
-            .ToRabbitQueue("WolverineCaseStudy")
+            .ToRabbitQueueOnNamedBroker(nsbBroker, "WolverineCaseStudy")
             .UseNServiceBusInterop();
-
-        options.ListenToRabbitQueue("WolverineCaseStudy.NsbInterop")
+        
+        options.ListenToRabbitQueueOnNamedBroker(nsbBroker, "WolverineCaseStudy.NsbInterop")
             .UseNServiceBusInterop();
         
         options.Policies.DisableConventionalLocalRouting();
